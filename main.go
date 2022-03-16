@@ -9,6 +9,8 @@ func main() {
 	router := gin.New()
 	router.Use(gin.Logger())
 
+	routes.UserRoutes(router)
+
 	routes.ShopRoutes(router)
 	routes.ProductRoutes(router)
 
