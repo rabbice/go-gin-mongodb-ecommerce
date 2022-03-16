@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rabbice/ecommerce/database"
+	"github.com/rabbice/ecommerce/helpers"
 	"github.com/rabbice/ecommerce/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -18,6 +19,11 @@ var ctx = context.Background()
 
 func AddShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if err := helpers.CheckUserType(c, "SELLER"); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error()})
+			return
+		}
 		var shop models.Shop
 
 		if err := c.BindJSON(&shop); err != nil {
@@ -61,6 +67,11 @@ func GetShop() gin.HandlerFunc {
 
 func DeleteShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if err := helpers.CheckUserType(c, "SELLER"); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error()})
+			return
+		}
 		shopId := c.Param("shop_id")
 		objectId, _ := primitive.ObjectIDFromHex(shopId)
 		_, err := shopCollection.DeleteOne(ctx, bson.M{"_id": objectId})
@@ -95,6 +106,11 @@ func GetShops() gin.HandlerFunc {
 
 func UpdateShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if err := helpers.CheckUserType(c, "SELLER"); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error()})
+			return
+		}
 		shopId := c.Param("shop_id")
 		var shop models.Shop
 		if err := c.ShouldBindJSON(&shop); err != nil {
