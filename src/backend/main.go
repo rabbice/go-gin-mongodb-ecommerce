@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/rabbice/ecommerce/routes"
+	"github.com/rabbice/ecommerce/src/backend/routes"
 )
 
 func main() {
