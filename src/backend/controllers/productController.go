@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -170,5 +171,27 @@ func UpdateProduct() gin.HandlerFunc {
 		}
 		c.IndentedJSON(http.StatusOK, gin.H{
 			"message": "Product successfully updated"})
+	}
+}
+
+func SearchProductByQuery() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var products []models.Product
+		query := c.Query("tag")
+		listofProducts := make([]models.Product, 0)
+
+		for i := 0; i < len(products); i++ {
+			found := false
+			for _, t := range products[i].Tags {
+				if strings.EqualFold(t, query) {
+					found = true
+				}
+			}
+
+			if found {
+				listofProducts = append(listofProducts, products[i])
+			}
+		}
+		c.JSON(http.StatusOK, listofProducts)
 	}
 }
