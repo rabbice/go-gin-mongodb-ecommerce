@@ -1,6 +1,9 @@
 package main
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/rabbice/ecommerce/src/backend/routes"
 )
@@ -9,10 +12,18 @@ func main() {
 	router := gin.New()
 	router.Use(gin.Logger())
 
-	routes.UserRoutes(router)
+	srv := &http.Server{
+		Addr:           ":5000",
+		Handler:        router,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
 
-	routes.ShopRoutes(router)
+	routes.UserRoutes(router)
 	routes.ProductRoutes(router)
 
-	router.Run(":5000")
+	routes.ShopRoutes(router)
+
+	srv.ListenAndServe()
 }

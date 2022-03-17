@@ -12,6 +12,7 @@ type Product struct {
 	Description string             `json:"description"`
 	Price       float64            `json:"price" validate:"required"`
 	Image       string             `json:"image"`
+	Tags        []string           `json:"tags"`
 	CreatedAt   time.Time          `json:"created_at"`
 	UpdatedAt   time.Time          `json:"updated_at"`
 	DeletedAt   time.Time          `json:"deleted_at"`
