@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -176,22 +175,39 @@ func UpdateProduct() gin.HandlerFunc {
 
 func SearchProductByQuery() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var products []models.Product
+		var searchProducts []models.Product
 		query := c.Query("tag")
-		listofProducts := make([]models.Product, 0)
-
-		for i := 0; i < len(products); i++ {
-			found := false
-			for _, t := range products[i].Tags {
-				if strings.EqualFold(t, query) {
-					found = true
-				}
-			}
-
-			if found {
-				listofProducts = append(listofProducts, products[i])
-			}
+		if query == "" {
+			log.Println("Query is empty")
+			c.Header("Content-Type", "application/json")
+			c.JSON(http.StatusNotFound, gin.H{"error": "Invalid search params"})
+			c.Abort()
+			return
 		}
-		c.JSON(http.StatusOK, listofProducts)
+
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		defer cancel()
+		search, err := productCollection.Find(ctx, bson.M{"tags": bson.M{"$regex": query}})
+		if err != nil {
+			c.IndentedJSON(404, "Cannot fetch the data")
+			return
+		}
+		err = search.All(ctx, &searchProducts)
+		if err != nil {
+			log.Println(err)
+			c.IndentedJSON(400, "invalid")
+			return
+		}
+		defer search.Close(ctx)
+
+		if err := search.Err(); err != nil {
+			log.Println(err)
+			c.IndentedJSON(400, "invalid request")
+			return
+		}
+
+		defer cancel()
+		c.IndentedJSON(200, searchProducts)
+
 	}
 }

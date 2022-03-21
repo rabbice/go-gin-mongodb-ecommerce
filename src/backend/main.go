@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -22,8 +23,10 @@ func main() {
 
 	routes.UserRoutes(router)
 	routes.ProductRoutes(router)
-
 	routes.ShopRoutes(router)
 
+	routes.PrivateRoutes(router)
+
+	log.Println("Starting server on port :5000...")
 	srv.ListenAndServe()
 }
