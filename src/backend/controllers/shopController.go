@@ -65,6 +65,28 @@ func GetShop() gin.HandlerFunc {
 	}
 }
 
+func GetProductsInShop() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		shopID := c.Param("id")
+
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+		var products []bson.M
+
+		cursor, err := productCollection.Find(ctx, bson.M{"shop_id": shopID})
+		if err != nil {
+			c.IndentedJSON(500, "Internal Server Error")
+		}
+		defer cancel()
+
+		if err = cursor.All(ctx, &products); err != nil {
+			c.IndentedJSON(500, "Internal Server Error")
+			return
+		}
+		c.IndentedJSON(200, products)
+	}
+}
+
 func DeleteShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if err := helpers.CheckUserType(c, "SELLER"); err != nil {

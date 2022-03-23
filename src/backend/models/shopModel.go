@@ -14,6 +14,5 @@ type Shop struct {
 	CreatedAt   time.Time          `bson:"created_at" json:"created_at"`
 	UpdatedAt   time.Time          `bson:"updated_at" json:"updated_at"`
 	DeletedAt   time.Time          `bson:"deleted_at" json:"deleted_at"`
-	Shop_ID     string             `json:"shop_id"`
-	Product     []Product          `json:"products"`
+	Shop_ID     string             `bson:"shop_id" json:"shop_id"`
 }
