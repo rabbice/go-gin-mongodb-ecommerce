@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	helpers "github.com/rabbice/ecommerce/src/backend/helpers"
+	helpers "github.com/rabbice/ecommerce/helpers"
 )
 
 func Authenticate() gin.HandlerFunc {

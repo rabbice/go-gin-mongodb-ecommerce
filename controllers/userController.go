@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rabbice/ecommerce/src/backend/database"
-	"github.com/rabbice/ecommerce/src/backend/helpers"
-	"github.com/rabbice/ecommerce/src/backend/models"
+	"github.com/rabbice/ecommerce/database"
+	"github.com/rabbice/ecommerce/helpers"
+	"github.com/rabbice/ecommerce/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"

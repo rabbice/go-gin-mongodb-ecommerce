@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/rabbice/ecommerce/src/backend/controllers"
+	"github.com/rabbice/ecommerce/controllers"
 )
 
 func ProductRoutes(v1 *gin.Engine) {

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rabbice/ecommerce/src/backend/routes"
+	"github.com/rabbice/ecommerce/routes"
 )
 
 func main() {
