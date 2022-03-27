@@ -20,4 +20,5 @@ type User struct {
 	UpdatedAt    time.Time          `json:"updated_at"`
 	UserID       string             `json:"user_id"`
 	Address      []Address          `json:"address"`
+	Cart         []Order            `bson:"cart" json:"cart"`
 }
