@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,6 +10,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
+	"github.com/go-redis/redis"
+	"github.com/rabbice/ecommerce/src/backend/cache"
 	"github.com/rabbice/ecommerce/src/backend/database"
 	"github.com/rabbice/ecommerce/src/backend/helpers"
 	"github.com/rabbice/ecommerce/src/backend/models"
@@ -19,6 +22,7 @@ import (
 
 var productCollection *mongo.Collection = database.OpenCollection(database.Client, "product")
 var validate = validator.New()
+var red = cache.GetRedisConnection()
 
 func AddProduct() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -70,29 +74,48 @@ func AddProduct() gin.HandlerFunc {
 		if err != nil {
 			fmt.Println(err)
 		}
-
+		log.Println("Remove data from Redis")
+		red.Del("product")
 		c.IndentedJSON(200, gin.H{"message": "Product successfully added"})
 	}
 }
 
 func GetProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
-
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 
-		var products []bson.M
+		val, err := red.Get("product").Result()
+		if err == redis.Nil {
+			log.Printf("Request to MongoDB")
+			cursor, err := productCollection.Find(ctx, bson.M{})
 
-		cursor, err := productCollection.Find(ctx, bson.M{})
+			if err != nil {
+				c.IndentedJSON(500, "Internal Server Error")
+			}
+			defer cursor.Close(ctx)
 
-		if err != nil {
+			products := make([]models.Product, 0)
+			for cursor.Next(ctx) {
+				var product models.Product
+				cursor.Decode(&product)
+				products = append(products, product)
+			}
+
+			data, _ := json.Marshal(products)
+			red.Set("product", string(data), 0)
+			c.JSON(http.StatusOK, products)
+		} else if err != nil {
 			c.IndentedJSON(500, "Internal Server Error")
+		} else {
+			log.Printf("Request to Redis")
+			products := make([]models.Product, 0)
+			json.Unmarshal([]byte(val), &products)
+
+			c.JSON(http.StatusOK, products)
+
 		}
 		defer cancel()
-		if err = cursor.All(ctx, &products); err != nil {
-			c.IndentedJSON(500, "Internal Server Error")
-			return
-		}
-		c.IndentedJSON(200, products)
+
 	}
 }
 
@@ -164,6 +187,8 @@ func UpdateProduct() gin.HandlerFunc {
 				"error": err.Error()})
 			return
 		}
+		log.Println("Remove data from Redis")
+		red.Del("product")
 		c.IndentedJSON(http.StatusOK, gin.H{
 			"message": "Product successfully updated"})
 	}
