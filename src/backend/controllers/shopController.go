@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -39,7 +40,6 @@ func AddShop() gin.HandlerFunc {
 		shop.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		shop.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		shop.ID = primitive.NewObjectID()
-		shop.Shop_ID = shop.ID.Hex()
 
 		result, insertErr := shopCollection.InsertOne(ctx, shop)
 		if insertErr != nil {
@@ -65,28 +65,6 @@ func GetShop() gin.HandlerFunc {
 	}
 }
 
-func GetProductsInShop() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		shopID := c.Param("id")
-
-		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-
-		var products []bson.M
-
-		cursor, err := productCollection.Find(ctx, bson.M{"shop_id": shopID})
-		if err != nil {
-			c.IndentedJSON(500, "Internal Server Error")
-		}
-		defer cancel()
-
-		if err = cursor.All(ctx, &products); err != nil {
-			c.IndentedJSON(500, "Internal Server Error")
-			return
-		}
-		c.IndentedJSON(200, products)
-	}
-}
-
 func DeleteShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if err := helpers.CheckUserType(c, "SELLER"); err != nil {
@@ -109,18 +87,16 @@ func DeleteShop() gin.HandlerFunc {
 
 func GetShops() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		var shops []bson.M
 		cur, err := shopCollection.Find(ctx, bson.M{})
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error()})
 		}
-		defer cur.Close(ctx)
-
-		shops := make([]models.Shop, 0)
-		for cur.Next(ctx) {
-			var shop models.Shop
-			cur.Decode(&shop)
-			shops = append(shops, shop)
+		if err = cur.All(ctx, &shops); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			fmt.Println(err)
+			return
 		}
 		c.IndentedJSON(http.StatusOK, shops)
 	}

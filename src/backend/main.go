@@ -21,11 +21,11 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	routes.UserRoutes(router)
 	routes.ProductRoutes(router)
 	routes.ShopRoutes(router)
+	routes.UserRoutes(router)
 
-	routes.PrivateRoutes(router)
+	routes.SellerRoutes(router)
 
 	log.Println("Starting server on port :5000...")
 	srv.ListenAndServe()

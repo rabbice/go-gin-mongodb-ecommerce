@@ -28,31 +28,50 @@ func AddProduct() gin.HandlerFunc {
 			return
 		}
 
-		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-		var product models.Product
-
-		if err := c.BindJSON(&product); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		}
-		defer cancel()
-
-		validationErr := validate.Struct(product)
-		if validationErr != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
-		}
-		product.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-		product.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-		product.ID = primitive.NewObjectID()
-
-		_, insertErr := productCollection.InsertOne(ctx, product)
-		if insertErr != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Product was not created"})
-			fmt.Println(insertErr)
+		shop_id := c.Query("id")
+		if shop_id == "" {
+			c.Header("Content-Type", "application/json")
+			c.JSON(http.StatusNotFound, gin.H{"error": "shop id is empty"})
+			c.Abort()
 			return
 		}
+
+		product, err := primitive.ObjectIDFromHex(shop_id)
+		if err != nil {
+			c.IndentedJSON(500, "Internal Server Error")
+		}
+
+		var products models.Product
+		products.ID = primitive.NewObjectID()
+		products.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		products.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		if err := c.BindJSON(&products); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		}
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		defer cancel()
 
-		c.JSON(http.StatusOK, product)
+		matchStage := bson.D{{Key: "$match", Value: bson.D{primitive.E{Key: "_id", Value: product}}}}
+		unwindStage := bson.D{{Key: "$unwind", Value: bson.D{primitive.E{Key: "path", Value: "$product"}}}}
+
+		cursor, err := shopCollection.Aggregate(ctx, mongo.Pipeline{matchStage, unwindStage})
+		if err != nil {
+			c.IndentedJSON(500, "Internal Server Error")
+		}
+
+		var productInfo []bson.M
+		if err = cursor.All(ctx, &productInfo); err != nil {
+			panic(err)
+		}
+
+		filter := bson.D{primitive.E{Key: "_id", Value: product}}
+		update := bson.D{{Key: "$push", Value: bson.D{primitive.E{Key: "products", Value: products}}}}
+		_, err = shopCollection.UpdateOne(ctx, filter, update)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		c.IndentedJSON(200, gin.H{"message": "Product successfully added"})
 	}
 }
 
@@ -137,8 +156,8 @@ func UpdateProduct() gin.HandlerFunc {
 			Key: "_id", Value: objectId}},
 			bson.D{primitive.E{Key: "$set", Value: bson.D{primitive.E{Key: "name", Value: product.Name},
 				primitive.E{Key: "description", Value: product.Description},
-				primitive.E{Key:"price", Value: product.Price},
-				primitive.E{Key:"image", Value: product.Image},
+				primitive.E{Key: "price", Value: product.Price},
+				primitive.E{Key: "image", Value: product.Image},
 			}}})
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{
@@ -149,7 +168,6 @@ func UpdateProduct() gin.HandlerFunc {
 			"message": "Product successfully updated"})
 	}
 }
-
 
 func SearchProductByQuery() gin.HandlerFunc {
 	return func(c *gin.Context) {

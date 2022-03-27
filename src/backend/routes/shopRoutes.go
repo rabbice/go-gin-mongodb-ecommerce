@@ -8,5 +8,4 @@ import (
 func ShopRoutes(v1 *gin.Engine) {
 	v1.GET("/shops", controllers.GetShops())
 	v1.GET("/shop/:shop_id", controllers.GetShop())
-	v1.GET("/shop/products/:id", controllers.GetProductsInShop())
 }
