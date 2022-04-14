@@ -1,4 +1,4 @@
 # Go Marketplace
 
 ### System Architecture
-![arch_diagram](/img/architecture.jfif)
+![arch_diagram](/img/architecture.png)
