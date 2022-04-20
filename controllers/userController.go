@@ -65,6 +65,10 @@ func SignUp() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while checking for the email"})
 			return
 		}
+		if count > 0 {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "this email already exists"})
+			return
+		}
 
 		password := HashPassword(*user.Password)
 		user.Password = &password
@@ -75,18 +79,21 @@ func SignUp() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while checking for the phone number"})
 			return
 		}
-
 		if count > 0 {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "this email or phone number already exists"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "this phone number already exists"})
 			return
 		}
+	
 		user.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		user.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		user.ID = primitive.NewObjectID()
 		user.UserID = user.ID.Hex()
-		token, refreshToken, _ := helpers.GenerateAllTokens(*user.Email, *user.FirstName, *user.LastName, *user.UserType, user.UserID)
+		token, refreshToken, _ := helpers.GenerateAllTokens(*user.Email, *user.FirstName, *user.LastName, *user.Seller, user.UserID)
 		user.Token = &token
 		user.RefreshToken = &refreshToken
+		user.Cart = make([]models.Cart, 0)
+		user.Address = make([]models.Address, 0)
+		user.OrderStatus = make([]models.Order, 0)
 
 		resultInsertionNumber, insertErr := userCollection.InsertOne(ctx, user)
 		if insertErr != nil {
@@ -123,7 +130,7 @@ func Login() gin.HandlerFunc {
 		if foundUser.Email == nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "user not found"})
 		}
-		token, refreshToken, _ := helpers.GenerateAllTokens(*foundUser.Email, *foundUser.FirstName, *foundUser.LastName, *foundUser.UserType, foundUser.UserID)
+		token, refreshToken, _ := helpers.GenerateAllTokens(*foundUser.Email, *foundUser.FirstName, *foundUser.LastName, *foundUser.Seller, foundUser.UserID)
 		helpers.UpdateAllTokens(token, refreshToken, foundUser.UserID)
 		err = userCollection.FindOne(ctx, bson.M{"user_id": foundUser.UserID}).Decode(&foundUser)
 

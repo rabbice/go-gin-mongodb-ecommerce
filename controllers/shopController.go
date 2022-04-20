@@ -20,7 +20,7 @@ var ctx = context.Background()
 
 func AddShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := helpers.CheckUserType(c, "SELLER"); err != nil {
+		if err := helpers.CheckUserType(c, true); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error()})
 			return
@@ -53,10 +53,11 @@ func AddShop() gin.HandlerFunc {
 
 func GetShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		shopId := c.Param("shop_id")
+		shopId := c.Param("id")
+		docID, _ := primitive.ObjectIDFromHex(shopId)
 		var shop models.Shop
 
-		err := shopCollection.FindOne(ctx, bson.M{"shop_id": shopId}).Decode(&shop)
+		err := shopCollection.FindOne(ctx, bson.M{"_id": docID}).Decode(&shop)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while fetching the shop"})
 		}
@@ -67,7 +68,7 @@ func GetShop() gin.HandlerFunc {
 
 func DeleteShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := helpers.CheckUserType(c, "SELLER"); err != nil {
+		if err := helpers.CheckUserType(c, true); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error()})
 			return
@@ -104,7 +105,7 @@ func GetShops() gin.HandlerFunc {
 
 func UpdateShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := helpers.CheckUserType(c, "SELLER"); err != nil {
+		if err := helpers.CheckUserType(c, true); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error()})
 			return
