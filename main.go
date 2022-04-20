@@ -6,10 +6,16 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rabbice/ecommerce/controllers"
+	"github.com/rabbice/ecommerce/database"
 	"github.com/rabbice/ecommerce/routes"
 )
 
+var cartHandler *controllers.CartHandler
+
 func main() {
+	cartHandler = controllers.NewApplication(database.OpenCollection(database.Client, "product"), database.OpenCollection(database.Client, "user"))
+
 	router := gin.New()
 	router.Use(gin.Logger())
 
@@ -26,6 +32,10 @@ func main() {
 	routes.UserRoutes(router)
 
 	routes.SellerRoutes(router)
+
+	router.GET("/cart", cartHandler.AddToCart())
+	router.GET("/remove/cart", cartHandler.RemoveFromCart())
+	router.GET("/order", cartHandler.BuyItem())
 
 	log.Println("Starting server on port :5000...")
 	srv.ListenAndServe()
