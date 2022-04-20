@@ -14,11 +14,12 @@ type User struct {
 	Password     *string            `json:"password" validate:"required,min=8"`
 	Phone        *string            `json:"phone" validate:"required"`
 	Token        *string            `json:"token"`
-	UserType     *string            `json:"user_type" validate:"required,eq=SELLER|eq=BUYER"`
+	Seller       *bool              `json:"seller" validate:"required"`
 	RefreshToken *string            `json:"refresh_token"`
 	CreatedAt    time.Time          `json:"created_at"`
 	UpdatedAt    time.Time          `json:"updated_at"`
 	UserID       string             `json:"user_id"`
-	Address      []Address          `json:"address"`
-	Cart         []Order            `bson:"cart" json:"cart"`
+	Address      []Address          `bson:"address" json:"address"`
+	Cart         []Cart             `bson:"usercart" json:"usercart"`
+	OrderStatus  []Order            `bson:"orders" json:"orders"`
 }
