@@ -26,21 +26,21 @@ var red = cache.GetRedisConnection()
 
 func AddProduct() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := helpers.CheckUserType(c, "SELLER"); err != nil {
+		if err := helpers.CheckUserType(c, true); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error()})
 			return
 		}
 
-		shop_id := c.Query("id")
-		if shop_id == "" {
+		shopid := c.Query("id")
+		if shopid == "" {
 			c.Header("Content-Type", "application/json")
 			c.JSON(http.StatusNotFound, gin.H{"error": "shop id is empty"})
 			c.Abort()
 			return
 		}
 
-		product, err := primitive.ObjectIDFromHex(shop_id)
+		product, err := primitive.ObjectIDFromHex(shopid)
 		if err != nil {
 			c.IndentedJSON(500, "Internal Server Error")
 		}
@@ -74,9 +74,12 @@ func AddProduct() gin.HandlerFunc {
 		if err != nil {
 			fmt.Println(err)
 		}
-		log.Println("Remove data from Redis")
-		red.Del("product")
-		c.IndentedJSON(200, gin.H{"message": "Product successfully added"})
+		_, insertErr := productCollection.InsertOne(ctx, products)
+		if insertErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Product was not created"})
+			return
+		}
+		c.IndentedJSON(200, gin.H{"message":"Product successfully added to shop"})
 	}
 }
 
@@ -139,7 +142,7 @@ func GetProduct() gin.HandlerFunc {
 
 func DeleteProduct() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := helpers.CheckUserType(c, "SELLER"); err != nil {
+		if err := helpers.CheckUserType(c, true); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error()})
 			return
@@ -161,7 +164,7 @@ func DeleteProduct() gin.HandlerFunc {
 
 func UpdateProduct() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if err := helpers.CheckUserType(c, "SELLER"); err != nil {
+		if err := helpers.CheckUserType(c, true); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error()})
 			return
