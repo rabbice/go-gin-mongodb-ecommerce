@@ -2,12 +2,12 @@ package helpers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/rabbice/ecommerce/database"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -20,28 +20,29 @@ type SignedDetails struct {
 	FirstName string
 	LastName  string
 	Uid       string
-	Seller  bool
-	jwt.StandardClaims
+	Seller    bool
+	jwt.RegisteredClaims
 }
 
 var userCollection *mongo.Collection = database.OpenCollection(database.Client, "user")
-var SECRET_KEY string = os.Getenv("SECRET_KEY")
+var SECRET_KEY string = ("SECRET_KEY")
 
 func GenerateAllTokens(email string, firstName string, lastName string, seller bool, uid string) (signedToken string, signedRefreshToken string, err error) {
+	exp := time.Now().Local().Add(time.Hour * 24)
 	claims := &SignedDetails{
 		Email:     email,
 		FirstName: firstName,
 		LastName:  lastName,
 		Uid:       uid,
-		Seller:  seller,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
+		Seller:    seller,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(exp),
 		},
 	}
 
 	refreshClaims := &SignedDetails{
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Local().Add(time.Hour * 168).Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(exp),
 		},
 	}
 
@@ -106,9 +107,9 @@ func ValidateToken(signedToken string) (claims *SignedDetails, msg string) {
 		return
 	}
 
-	if claims.ExpiresAt < time.Now().Local().Unix() {
-		fmt.Printf("The token is expired\n")
-		msg = err.Error()
+	if errors.Is(err, jwt.ErrTokenExpired) {
+		fmt.Println("The token has expired")
+		log.Fatal(err)
 		return
 	}
 	return claims, msg
