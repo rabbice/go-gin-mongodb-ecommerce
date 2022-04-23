@@ -8,13 +8,12 @@ import (
 
 type User struct {
 	ID           primitive.ObjectID `bson:"_id"`
-	FirstName    *string            `json:"first_name" validate:"required,min=2,max=100"`
-	LastName     *string            `json:"last_name" validate:"required,min=2,max=100"`
+	FirstName    *string            `json:"firstname" validate:"required,min=2,max=100"`
+	LastName     *string            `json:"lastname" validate:"required,min=2,max=100"`
 	Email        *string            `json:"email" validate:"email,required"`
 	Password     *string            `json:"password" validate:"required,min=8"`
-	Phone        *string            `json:"phone" validate:"required"`
 	Token        *string            `json:"token"`
-	Seller       *bool              `json:"seller" validate:"required"`
+	Seller       bool              `json:"seller" validate:"required"`
 	RefreshToken *string            `json:"refresh_token"`
 	CreatedAt    time.Time          `json:"created_at"`
 	UpdatedAt    time.Time          `json:"updated_at"`

@@ -7,9 +7,9 @@ import (
 )
 
 func CheckUserType(c *gin.Context, role bool) (err error) {
-	userType := c.GetBool("seller")
+	seller := c.GetBool("seller")
 	err = nil
-	if userType != role {
+	if seller != role {
 		err = errors.New("unauthorized to access this resource")
 		return err
 	}
