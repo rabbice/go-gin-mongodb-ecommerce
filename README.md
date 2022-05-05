@@ -16,7 +16,9 @@ You can follow the guide here:
 
 ### Building and Running the Application
 Build the application:
+
 `go build -o app`
 
 Run the application:
+
 `docker-compose up -d`
