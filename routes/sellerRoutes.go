@@ -14,4 +14,6 @@ func SellerRoutes(v1 *gin.Engine) {
 	v1.POST("/product", controllers.AddProduct())
 	v1.DELETE("/product/:product_id", controllers.DeleteProduct())
 	v1.PUT("/product/:product_id", controllers.UpdateProduct())
+	v1.POST("/ship", controllers.CreateDelivery())
+
 }
