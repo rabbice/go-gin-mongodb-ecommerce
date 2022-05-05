@@ -20,7 +20,7 @@ var (
 	ErrCantUpdateUser     = errors.New("can't update the user's cart")
 	ErrCantRemoveItem     = errors.New("can't remove item from cart")
 )
-
+// optimizing functions implementation for easier readability
 func AddToCart(ctx context.Context, productCollection, userCollection *mongo.Collection, productID primitive.ObjectID, userID string) error {
 	searchdb, err := productCollection.Find(ctx, bson.M{"_id": productID})
 	if err != nil {
@@ -63,7 +63,7 @@ func MakeOrder(ctx context.Context, userCollection *mongo.Collection, userID str
 
 	orderCart.ID = primitive.NewObjectID()
 	orderCart.OrderedAt = time.Now()
-	orderCart.Cart = make([]models.Cart, 0)
+	//orderCart.Cart = make([]models.Cart, 0)
 	orderCart.PaymentMethod.COD = true
 
 	// fetch user cart and total
@@ -98,7 +98,7 @@ func MakeOrder(ctx context.Context, userCollection *mongo.Collection, userID str
 		log.Println(err)
 	}
 	filter2 := bson.D{primitive.E{Key: "_id", Value: id}}
-	update2 := bson.M{"$push":bson.M{"orders.order_list": bson.M{"$each": getItems.Cart}}}
+	update2 := bson.M{"$push": bson.M{"orders": bson.M{"$each": getItems.Cart}}}
 
 	_, err = userCollection.UpdateOne(ctx, filter2, update2)
 	if err != nil {
@@ -133,4 +133,42 @@ func RemoveItemFromCart(ctx context.Context, productCollection, userCollection *
 	}
 	return nil
 
+}
+
+func InstantBuy(ctx context.Context, productCollection, userCollection *mongo.Collection, productID primitive.ObjectID, userID string) error {
+	id, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		log.Println(err)
+		return ErrUserIdNotFound
+	}
+
+	var productDetails models.Cart
+	var orderDetails models.Order
+
+	orderDetails.ID = primitive.NewObjectID()
+	orderDetails.OrderedAt = time.Now()
+	//orderDetails.Cart =make([]models.Cart, 0)
+	orderDetails.PaymentMethod.COD = true
+	err = productCollection.FindOne(ctx, bson.D{primitive.E{Key: "_id", Value: productID}}).Decode(&productDetails)
+	if err != nil {
+		log.Println(err)
+	}
+	orderDetails.Price = productDetails.Price
+
+	filter := bson.D{primitive.E{Key: "_id", Value: id}}
+	update := bson.D{{Key: "$push", Value: bson.D{primitive.E{Key: "orders", Value: orderDetails}}}}
+
+	_, err = userCollection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		log.Println(err)
+	}
+
+	filter2 := bson.D{primitive.E{Key: "_id", Value: id}}
+	update2 := bson.M{"$push":bson.M{"orders": productDetails}}
+
+	_, err = userCollection.UpdateOne(ctx, filter2, update2)
+	if err != nil {
+		log.Println(err)
+	}
+	return nil
 }

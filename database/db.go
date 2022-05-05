@@ -7,6 +7,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/rabbice/ecommerce/logs"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -27,6 +29,10 @@ func DBInstance() *mongo.Client {
 		log.Fatal(err)
 	}
 	fmt.Println("Connected to MongoDB!")
+
+	prometheus.Register(logs.TotalRequests)
+	prometheus.Register(logs.TotalHTTPMethods)
+	prometheus.Register(logs.HTTPDuration)
 
 	return client
 }
