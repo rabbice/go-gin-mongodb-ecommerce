@@ -38,6 +38,7 @@ func AddShop() gin.HandlerFunc {
 			return
 		}
 		shop.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		shop.Products = make([]models.Product, 0)
 		shop.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		shop.ID = primitive.NewObjectID()
 
