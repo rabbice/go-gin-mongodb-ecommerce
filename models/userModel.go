@@ -13,7 +13,7 @@ type User struct {
 	Email        *string            `json:"email" validate:"email,required"`
 	Password     *string            `json:"password" validate:"required,min=8"`
 	Token        *string            `json:"token"`
-	Seller       bool              `json:"seller" validate:"required"`
+	Seller       *bool               `json:"seller" validate:"required"`
 	RefreshToken *string            `json:"refresh_token"`
 	CreatedAt    time.Time          `json:"created_at"`
 	UpdatedAt    time.Time          `json:"updated_at"`
@@ -21,4 +21,5 @@ type User struct {
 	Address      []Address          `bson:"address" json:"address"`
 	Cart         []Cart             `bson:"usercart" json:"usercart"`
 	OrderStatus  []Order            `bson:"orders" json:"orders"`
+	Delivery     []Delivery         `bson:"deliveries" json:"deliveries"`
 }

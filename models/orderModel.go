@@ -16,7 +16,6 @@ type Cart struct {
 
 type Order struct {
 	ID            primitive.ObjectID `bson:"_id"`
-	Cart          []Cart             `bson:"order_list" json:"order_list"`
 	OrderedAt     time.Time          `bson:"ordered_at" json:"ordered_at"`
 	Price         float64            `bson:"total_price" json:"total_price"`
 	PaymentMethod Payment            `bson:"payment_method" json:"payment_method"`
