@@ -79,6 +79,8 @@ func AddProduct() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Product was not created"})
 			return
 		}
+		log.Println("Remove data from Redis")
+		red.Del("product")
 		c.IndentedJSON(200, gin.H{"message":"Product successfully added to shop"})
 	}
 }
@@ -86,6 +88,8 @@ func AddProduct() gin.HandlerFunc {
 func GetProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		defer cancel()
+
 
 		val, err := red.Get("product").Result()
 		if err == redis.Nil {
@@ -117,8 +121,6 @@ func GetProducts() gin.HandlerFunc {
 			c.JSON(http.StatusOK, products)
 
 		}
-		defer cancel()
-
 	}
 }
 

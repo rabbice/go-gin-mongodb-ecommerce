@@ -90,7 +90,7 @@ func (app *CartHandler) RemoveFromCart() gin.HandlerFunc {
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, err)
 		}
-		c.IndentedJSON(200, gin.H{"message":"Successfully removed item from cart"})
+		c.IndentedJSON(200, gin.H{"message": "Successfully removed item from cart"})
 	}
 }
 
@@ -109,7 +109,7 @@ func (app *CartHandler) BuyItem() gin.HandlerFunc {
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, err)
 		}
-		c.IndentedJSON(200, gin.H{"message":"Successfully placed order"})
+		c.IndentedJSON(200, gin.H{"message": "Successfully placed order"})
 	}
 }
 
@@ -143,6 +143,6 @@ func (app *CartHandler) InstantBuy() gin.HandlerFunc {
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, err)
 		}
-		c.IndentedJSON(200, gin.H{"message":"Item purchased"})
+		c.IndentedJSON(200, gin.H{"message": "Item purchased"})
 	}
 }

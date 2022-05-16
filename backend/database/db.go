@@ -19,7 +19,7 @@ func DBInstance() *mongo.Client {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	MongoDb := os.Getenv("MONGODB_URL")
+	MongoDb := os.Getenv("MONGODB_URI")
 	ctx := context.Background()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(MongoDb))
 	if err != nil {
@@ -40,7 +40,7 @@ func DBInstance() *mongo.Client {
 var Client *mongo.Client = DBInstance()
 
 func OpenCollection(client *mongo.Client, collectionName string) *mongo.Collection {
-	var collection *mongo.Collection = client.Database("demo").Collection(collectionName)
+	var collection *mongo.Collection = client.Database(os.Getenv("MONGODB_DATABASE")).Collection(collectionName)
 
 	return collection
 }

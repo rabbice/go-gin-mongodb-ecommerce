@@ -20,6 +20,7 @@ var (
 	ErrCantUpdateUser     = errors.New("can't update the user's cart")
 	ErrCantRemoveItem     = errors.New("can't remove item from cart")
 )
+
 // optimizing functions implementation for easier readability
 func AddToCart(ctx context.Context, productCollection, userCollection *mongo.Collection, productID primitive.ObjectID, userID string) error {
 	searchdb, err := productCollection.Find(ctx, bson.M{"_id": productID})
@@ -164,7 +165,7 @@ func InstantBuy(ctx context.Context, productCollection, userCollection *mongo.Co
 	}
 
 	filter2 := bson.D{primitive.E{Key: "_id", Value: id}}
-	update2 := bson.M{"$push":bson.M{"orders": productDetails}}
+	update2 := bson.M{"$push": bson.M{"orders": productDetails}}
 
 	_, err = userCollection.UpdateOne(ctx, filter2, update2)
 	if err != nil {

@@ -119,6 +119,6 @@ func ConfirmDelivery() gin.HandlerFunc {
 		}
 		defer cancel()
 		ctx.Done()
-		c.IndentedJSON(200, "Product successfully delivered")
+		c.IndentedJSON(200, gin.H{"message": "Product successfully delivered"})
 	}
 }
