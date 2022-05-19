@@ -18,7 +18,7 @@ type CartHandler struct {
 	userCollection    *mongo.Collection
 }
 
-func NewApplication(productCollection, userCollection *mongo.Collection) *CartHandler {
+func NewCartHandler(productCollection, userCollection *mongo.Collection) *CartHandler {
 	return &CartHandler{
 		productCollection: productCollection,
 		userCollection:    userCollection,

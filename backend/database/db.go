@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
+	//"github.com/joho/godotenv"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rabbice/ecommerce/logs"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,10 +15,10 @@ import (
 )
 
 func DBInstance() *mongo.Client {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	//err := godotenv.Load(".env")
+	//if err != nil {
+	//log.Fatal("Error loading .env file")
+	//}
 	MongoDb := os.Getenv("MONGODB_URI")
 	ctx := context.Background()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(MongoDb))

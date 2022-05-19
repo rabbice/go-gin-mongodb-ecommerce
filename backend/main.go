@@ -19,7 +19,7 @@ import (
 var cartHandler *controllers.CartHandler
 
 func main() {
-	cartHandler = controllers.NewApplication(database.OpenCollection(database.Client, "product"), database.OpenCollection(database.Client, "user"))
+	cartHandler = controllers.NewCartHandler(database.OpenCollection(database.Client, "product"), database.OpenCollection(database.Client, "user"))
 	store := cookie.NewStore([]byte("secret"))
 
 	router := gin.New()
