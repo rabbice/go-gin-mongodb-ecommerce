@@ -38,7 +38,7 @@ jobs:
       - run:
           name: Push image
           command: |
-            echo $DOCKER_PASS | docker login --u $DOCKER_USER --password-stdin
+            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
             docker tag fractalform/ecommerce-api:latest fractalform/ecommerce-api:latest
             docker push fractalform/ecommerce-api:latest
 workflows:
