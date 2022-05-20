@@ -1,0 +1,50 @@
+version: 2.1
+
+executors:
+  environment:
+    docker:
+      - image: circleci/golang:1.17
+    working_directory: /go/src/github.com/rabbice/ecommerce
+
+jobs:
+  test:
+    executor: environment
+    steps:
+      - checkout
+      - restore_cache:
+          key: go-mod-v4-{{ checksum "go.sum" }}
+      - run:
+          name: Install Dependencies
+          command: go mod download
+      - save_cache:
+          key: go-mod-v4-{{ checksum "go.sum" }}
+          paths:
+            - "go/pkg/mod"
+      - run:
+          name: Code linting
+          command: >
+            go get -u golang.org/x/lint/golint
+            #golint ./...
+  build:
+    executor: environment
+    steps:
+      - checkout
+      - setup_remote_docker:
+        version: 19.03.13
+      - run:
+          name: Build image
+          command: >
+            TAG=0.1.$CIRCLE_BUILD_NUM
+            docker build -t ecommerce-api:$TAG .
+      - run:
+          name: Push image
+          command: >
+            docker tag ecommerce-api:$TAG
+            docker tag ecommerce-api:develop
+            docker push ecommerce-api:$TAG
+            docker push ecommerce-api:develop
+workflows:
+  ci_cd:
+    jobs:
+      - test
+      - build
