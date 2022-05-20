@@ -34,13 +34,15 @@ jobs:
       - run:
           name: Build image
           command: |
-            docker build -t fractalform/ecommerce-api:latest .
+            TAG=0.1.$CIRCLE_BUILD_NUM
+            docker build -t fractalform/ecommerce-api:$TAG .
       - run:
           name: Push image
           command: |
-            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-            docker tag fractalform/ecommerce-api:latest fractalform/ecommerce-api:latest
-            docker push fractalform/ecommerce-api:latest
+            TAG=0.1.$CIRCLE_BUILD_NUM
+            docker login --fractalform --password-stdin
+            docker tag fractalform/ecommerce-api:$TAG fractalform/ecommerce-api:$TAG
+            docker push fractalform/ecommerce-api:$TAG
 workflows:
   ci_cd:
     jobs:
