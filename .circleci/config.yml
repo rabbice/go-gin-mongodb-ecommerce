@@ -33,25 +33,14 @@ jobs:
           version: 19.03.13
       - run:
           name: Build image
-<<<<<<< HEAD
-          command: >
+          command: |
             docker build -t ecommerce-api .
       - run:
           name: Push image
-          command: >
+          command: |
             docker tag 705905076562.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api
             docker tag 705905076562.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:develop
             docker push 705905076562.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api
-=======
-          command: |
-            docker build -t ecommerce-api .
-      - run:
-          name: Push image
-          command: |
-            docker tag 705905076562.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:$TAG
-            docker tag 705905076562.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:develop
-            docker push 705905076562.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:$TAG
->>>>>>> 5197b079a32f29f01c39cc44f017846227c9f21b
             docker push 705905076562.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:develop
 workflows:
   ci_cd:
