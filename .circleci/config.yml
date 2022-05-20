@@ -34,12 +34,12 @@ jobs:
       - run:
           name: Build image
           command: |
-            docker build -t ecommerce-api:latest .
+            docker build -t fractalform/ecommerce-api:latest .
       - run:
           name: Push image
           command: |
-            docker tag ecommerce-api:latest ecommerce-api:latest
-            docker push ecommerce-api:latest
+            docker tag ecommerce-api:latest fractalform/ecommerce-api:latest
+            docker push fractalform/ecommerce-api:latest
 workflows:
   ci_cd:
     jobs:
