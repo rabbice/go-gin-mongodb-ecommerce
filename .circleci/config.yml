@@ -26,10 +26,6 @@ jobs:
             go get -u golang.org/x/lint/golint
             #golint ./...
   build:
-    docker:
-      auth:
-        username: fractalform
-        password: $DOCKERHUB_PASSWORD
     executor: environment
     steps:
       - checkout
