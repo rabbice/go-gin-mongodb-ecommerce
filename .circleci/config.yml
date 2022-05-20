@@ -38,9 +38,9 @@ jobs:
       - run:
           name: Push image
           command: |
-            docker tag 705905076562.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api
+            docker tag 705905076562.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:latest
             docker tag 705905076562.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:develop
-            docker push 705905076562.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api
+            docker push 705905076562.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:latest
             docker push 705905076562.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:develop
 workflows:
   ci_cd:
