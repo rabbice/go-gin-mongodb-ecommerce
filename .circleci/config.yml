@@ -27,7 +27,6 @@ jobs:
             #golint ./...
   build:
     docker:
-      - image: cimg/go:1.17
         auth:
           username: fractalform
           password: $DOCKERHUB_PASSWORD
