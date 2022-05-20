@@ -26,11 +26,16 @@ jobs:
             go get -u golang.org/x/lint/golint
             #golint ./...
   build:
+    docker:
+      - image: cimg/go:1.17
+        auth:
+          username: fractalform
+          password: $DOCKERHUB_PASSWORD
     executor: environment
     steps:
       - checkout
       - setup_remote_docker:
-          version: 19.03.13
+          version: 20.10.14
       - run:
           name: Build image
           command: |
@@ -38,6 +43,7 @@ jobs:
       - run:
           name: Push image
           command: |
+            echo $DOCKER_PASS | docker login --u $DOCKER_USER --password-stdin
             docker tag fractalform/ecommerce-api:latest fractalform/ecommerce-api:latest
             docker push fractalform/ecommerce-api:latest
 workflows:
