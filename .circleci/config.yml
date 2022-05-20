@@ -40,7 +40,7 @@ jobs:
           name: Push image
           command: |
             TAG=0.1.$CIRCLE_BUILD_NUM
-            docker login --fractalform --password-stdin
+            docker login --username fractalform --password-stdin
             docker tag fractalform/ecommerce-api:$TAG fractalform/ecommerce-api:$TAG
             docker push fractalform/ecommerce-api:$TAG
 workflows:
