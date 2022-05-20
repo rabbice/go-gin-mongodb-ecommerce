@@ -34,7 +34,7 @@ jobs:
       - run:
           name: Build image
           command: |
-            docker build -t ecommerce-api .
+            docker build -t ecommerce-api:latest .
       - run:
           name: Push image
           command: |
