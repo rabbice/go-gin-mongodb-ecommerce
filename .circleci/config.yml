@@ -2,7 +2,6 @@ version: 2.1
 
 orbs:
   slack: circleci/slack@4.1.1
-
 executors:
   environment:
     docker:
@@ -14,7 +13,7 @@ jobs:
     executor: environment
     steps:
       - slack/notify:
-          channel: "#ci"
+          channel: "#pipeline"
           event: always
           custom: |
             {
