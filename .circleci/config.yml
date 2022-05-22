@@ -1,0 +1,109 @@
+version: 2.1
+
+orbs:
+  slack: circleci/slack@4.1.1
+executors:
+  environment:
+    docker:
+      - image: circleci/golang:1.17
+    working_directory: /go/src/github.com/rabbice/ecommerce
+
+jobs:
+  test:
+    executor: environment
+    steps:
+      - slack/notify:
+          channel: "#pipeline"
+          event: always
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Build has started*! :crossed_fingers:"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Project*:\n$CIRCLE_PROJECT_REPONAME"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*When*:\n$(date +'%m/%d/%Y %T')"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch*:\n$CIRCLE_BRANCH"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author*:\n$CIRCLE_USERNAME"
+                    }
+                  ],
+                  "accessory": {
+                    "type": "image",
+                    "image_url": "https://media.giphy.com/media/3orieTfp1MeFLiBQR2/giphy.gif",
+                    "alt_text": "CircleCI logo"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Workflow"
+                      },
+                      "url": "https://circleci.com/workflow-run/${CIRCLE_WORKFLOW_ID}"
+                    }
+                  ]
+                }
+              ]
+            }
+      - checkout
+      - restore_cache:
+          key: go-mod-v4-{{ checksum "go.sum" }}
+      - run:
+          name: Install Dependencies
+          command: go mod download
+      - save_cache:
+          key: go-mod-v4-{{ checksum "go.sum" }}
+          paths:
+            - "go/pkg/mod"
+      - run:
+          name: Code linting
+          command: >
+            go get -u golang.org/x/lint/golint
+            #golint ./...
+  build:
+    executor: environment
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+      - run:
+          name: Build image
+          command: |
+            TAG=0.1.$CIRCLE_BUILD_NUM
+            docker build -t fractalform/ecommerce-api:$TAG .
+      - run:
+          name: Push image
+          command: |
+            TAG=0.1.$CIRCLE_BUILD_NUM
+            docker login --username $DOCKER_USER --password $DOCKER_PASSWORD
+            docker tag fractalform/ecommerce-api:$TAG fractalform/ecommerce-api:$TAG
+            docker push fractalform/ecommerce-api:$TAG
+workflows:
+  ci_cd:
+    jobs:
+      - test
+      - build

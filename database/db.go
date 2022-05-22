@@ -4,37 +4,43 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
+	"os"
 
+	//"github.com/joho/godotenv"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/rabbice/ecommerce/logs"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func DBinstance() *mongo.Client {
-	MongoDb := "mongodb://localhost:27017"
-	fmt.Print(MongoDb)
-
-	client, err := mongo.NewClient(options.Client().ApplyURI(MongoDb))
+func DBInstance() *mongo.Client {
+	//err := godotenv.Load(".env")
+	//if err != nil {
+	//log.Fatal("Error loading .env file")
+	//}
+	MongoDb := os.Getenv("MONGODB_URI")
+	ctx := context.Background()
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(MongoDb))
 	if err != nil {
 		log.Fatal(err)
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-
-	defer cancel()
-
-	err = client.Connect(ctx)
-
-	if err != nil {
+	if err = client.Ping(context.TODO(), readpref.Primary()); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("connected to mongodb")
+	fmt.Println("Connected to MongoDB!")
+
+	prometheus.Register(logs.TotalRequests)
+	prometheus.Register(logs.TotalHTTPMethods)
+	prometheus.Register(logs.HTTPDuration)
+
 	return client
 }
 
-var Client *mongo.Client = DBinstance()
+var Client *mongo.Client = DBInstance()
 
 func OpenCollection(client *mongo.Client, collectionName string) *mongo.Collection {
-	var collection *mongo.Collection = client.Database("demo").Collection(collectionName)
+	var collection *mongo.Collection = client.Database(os.Getenv("MONGODB_DATABASE")).Collection(collectionName)
 
 	return collection
 }
