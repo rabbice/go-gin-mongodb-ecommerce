@@ -1,0 +1,15 @@
+mode: set
+github.com/rabbice/ecommerce/tests/main.go:26.34,28.2 1 1
+github.com/rabbice/ecommerce/tests/main.go:30.33,32.51 2 1
+github.com/rabbice/ecommerce/tests/main.go:37.2,42.30 4 1
+github.com/rabbice/ecommerce/tests/main.go:32.51,35.3 2 0
+github.com/rabbice/ecommerce/tests/main.go:45.36,48.51 3 1
+github.com/rabbice/ecommerce/tests/main.go:52.2,55.37 3 1
+github.com/rabbice/ecommerce/tests/main.go:61.2,61.17 1 1
+github.com/rabbice/ecommerce/tests/main.go:66.2,68.32 2 1
+github.com/rabbice/ecommerce/tests/main.go:48.51,51.3 2 0
+github.com/rabbice/ecommerce/tests/main.go:55.37,56.27 1 1
+github.com/rabbice/ecommerce/tests/main.go:56.27,58.4 1 1
+github.com/rabbice/ecommerce/tests/main.go:61.17,64.3 2 1
+github.com/rabbice/ecommerce/tests/main.go:71.13,75.2 3 1
+github.com/rabbice/ecommerce/tests/main.go:77.13,83.2 5 0

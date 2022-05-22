@@ -2,11 +2,13 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rabbice/ecommerce/database"
+	"github.com/rabbice/ecommerce/helpers"
 	"github.com/rabbice/ecommerce/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -18,6 +20,11 @@ var ctx = context.Background()
 
 func AddShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if err := helpers.CheckUserType(c, true); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error()})
+			return
+		}
 		var shop models.Shop
 
 		if err := c.BindJSON(&shop); err != nil {
@@ -31,9 +38,9 @@ func AddShop() gin.HandlerFunc {
 			return
 		}
 		shop.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		shop.Products = make([]models.Product, 0)
 		shop.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		shop.ID = primitive.NewObjectID()
-		shop.Shop_ID = shop.ID.Hex()
 
 		result, insertErr := shopCollection.InsertOne(ctx, shop)
 		if insertErr != nil {
@@ -47,10 +54,11 @@ func AddShop() gin.HandlerFunc {
 
 func GetShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		shopId := c.Param("shop_id")
+		shopId := c.Param("id")
+		docID, _ := primitive.ObjectIDFromHex(shopId)
 		var shop models.Shop
 
-		err := shopCollection.FindOne(ctx, bson.M{"shop_id": shopId}).Decode(&shop)
+		err := shopCollection.FindOne(ctx, bson.M{"_id": docID}).Decode(&shop)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while fetching the shop"})
 		}
@@ -61,6 +69,11 @@ func GetShop() gin.HandlerFunc {
 
 func DeleteShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if err := helpers.CheckUserType(c, true); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error()})
+			return
+		}
 		shopId := c.Param("shop_id")
 		objectId, _ := primitive.ObjectIDFromHex(shopId)
 		_, err := shopCollection.DeleteOne(ctx, bson.M{"_id": objectId})
@@ -76,18 +89,16 @@ func DeleteShop() gin.HandlerFunc {
 
 func GetShops() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		var shops []bson.M
 		cur, err := shopCollection.Find(ctx, bson.M{})
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error()})
 		}
-		defer cur.Close(ctx)
-
-		shops := make([]models.Shop, 0)
-		for cur.Next(ctx) {
-			var shop models.Shop
-			cur.Decode(&shop)
-			shops = append(shops, shop)
+		if err = cur.All(ctx, &shops); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			fmt.Println(err)
+			return
 		}
 		c.IndentedJSON(http.StatusOK, shops)
 	}
@@ -95,6 +106,11 @@ func GetShops() gin.HandlerFunc {
 
 func UpdateShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if err := helpers.CheckUserType(c, true); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error()})
+			return
+		}
 		shopId := c.Param("shop_id")
 		var shop models.Shop
 		if err := c.ShouldBindJSON(&shop); err != nil {
