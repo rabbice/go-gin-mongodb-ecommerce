@@ -81,7 +81,7 @@ func AddProduct() gin.HandlerFunc {
 		}
 		log.Println("Remove data from Redis")
 		red.Del("product")
-		c.IndentedJSON(200, gin.H{"message":"Product successfully added to shop"})
+		c.IndentedJSON(200, gin.H{"message": "Product successfully added to shop"})
 	}
 }
 
@@ -89,7 +89,6 @@ func GetProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		defer cancel()
-
 
 		val, err := red.Get("product").Result()
 		if err == redis.Nil {
@@ -201,6 +200,9 @@ func UpdateProduct() gin.HandlerFunc {
 
 func SearchProductByQuery() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		defer cancel()
+
 		var searchProducts []models.Product
 		query := c.Query("tag")
 		if query == "" {
@@ -211,8 +213,6 @@ func SearchProductByQuery() gin.HandlerFunc {
 			return
 		}
 
-		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-		defer cancel()
 		search, err := productCollection.Find(ctx, bson.M{"tags": bson.M{"$regex": query}})
 		if err != nil {
 			c.IndentedJSON(404, "Cannot fetch the data")
@@ -231,8 +231,6 @@ func SearchProductByQuery() gin.HandlerFunc {
 			c.IndentedJSON(400, "invalid request")
 			return
 		}
-
-		defer cancel()
 		c.IndentedJSON(200, searchProducts)
 
 	}

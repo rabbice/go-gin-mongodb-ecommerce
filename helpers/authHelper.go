@@ -15,4 +15,3 @@ func CheckUserType(c *gin.Context, role bool) (err error) {
 	}
 	return err
 }
-

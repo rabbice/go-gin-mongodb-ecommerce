@@ -50,8 +50,8 @@ func TestUpdateProduct(t *testing.T) {
 	r.PUT("/product/:id", UpdateProduct)
 
 	product := Product{
-		ID:   "c0283p3d0cvuglq85log",
-		Name: "Red Tie",
+		ID:          "c0283p3d0cvuglq85log",
+		Name:        "Red Tie",
 		Description: "For all formal occasions",
 	}
 	jsonValue, _ := json.Marshal(product)

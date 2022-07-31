@@ -46,7 +46,6 @@ func main() {
 	router.GET("/cart", cartHandler.AddToCart())
 	router.GET("/remove/cart", cartHandler.RemoveFromCart())
 	router.GET("/order", cartHandler.BuyItem())
-	
 
 	log.Println("Starting server on port :5000...")
 	srv.ListenAndServe()

@@ -130,4 +130,3 @@ func Login() gin.HandlerFunc {
 		c.IndentedJSON(200, foundUser)
 	}
 }
-
