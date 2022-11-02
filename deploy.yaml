@@ -1,0 +1,588 @@
+apiVersion: v1
+items:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: api
+      name: api
+    spec:
+      ports:
+        - name: "5000"
+          port: 5000
+          targetPort: 5000
+      selector:
+        io.kompose.service: api
+      type: LoadBalancer
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: cadvisor
+      name: cadvisor
+    spec:
+      ports:
+        - name: "8080"
+          port: 8080
+          targetPort: 8080
+      selector:
+        io.kompose.service: cadvisor
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: elasticsearch
+      name: elasticsearch
+    spec:
+      ports:
+        - name: "9200"
+          port: 9200
+          targetPort: 9200
+      selector:
+        io.kompose.service: elasticsearch
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: grafana
+      name: grafana
+    spec:
+      ports:
+        - name: "3000"
+          port: 3000
+          targetPort: 3000
+      selector:
+        io.kompose.service: grafana
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: kibana
+      name: kibana
+    spec:
+      ports:
+        - name: "5601"
+          port: 5601
+          targetPort: 5601
+      selector:
+        io.kompose.service: kibana
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: logstash
+      name: logstash
+    spec:
+      ports:
+        - name: "5100"
+          port: 5100
+          targetPort: 5100
+        - name: "12201"
+          port: 12201
+          targetPort: 12201
+        - name: 12201-udp
+          port: 12201
+          protocol: UDP
+          targetPort: 12201
+      selector:
+        io.kompose.service: logstash
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: mongodb
+      name: mongodb
+    spec:
+      ports:
+        - name: "27017"
+          port: 27017
+          targetPort: 27017
+      selector:
+        io.kompose.service: mongodb
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: nginx
+      name: nginx
+    spec:
+      ports:
+        - name: "80"
+          port: 80
+          targetPort: 80
+      selector:
+        io.kompose.service: nginx
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: prometheus
+      name: prometheus
+    spec:
+      ports:
+        - name: "9090"
+          port: 9090
+          targetPort: 9090
+      selector:
+        io.kompose.service: prometheus
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: redis
+      name: redis
+    spec:
+      ports:
+        - name: "6379"
+          port: 6379
+          targetPort: 6379
+      selector:
+        io.kompose.service: redis
+    status:
+      loadBalancer: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: api
+      name: api
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: api
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+            kompose.version: 1.26.1 (a9d05d509)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: api
+        spec:
+          containers:
+            - env:
+                - name: MONGODB_DATABASE
+                  value: ecommerce
+                - name: MONGODB_URI
+                  value: mongodb://mongodb:27017/
+                - name: REDIS_URI
+                  value: redis:6379
+              image: fractalform/ecommerce-api
+              name: api
+              ports:
+                - containerPort: 5000
+              resources: {}
+          restartPolicy: Always
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: cadvisor
+      name: cadvisor
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: cadvisor
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+            kompose.version: 1.26.1 (a9d05d509)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: cadvisor
+        spec:
+          containers:
+            - image: gcr.io/cadvisor/cadvisor:latest
+              name: cadvisor
+              ports:
+                - containerPort: 8080
+              resources: {}
+          restartPolicy: Always
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: elasticsearch
+      name: elasticsearch
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: elasticsearch
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+            kompose.version: 1.26.1 (a9d05d509)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: elasticsearch
+        spec:
+          containers:
+            - env:
+                - name: discovery.type
+                  value: single-node
+                - name: xpack.security.enabled
+                  value: "false"
+                - name: xpack.security.http.ssl.enabled
+                  value: "false"
+              image: docker.elastic.co/elasticsearch/elasticsearch:8.2.0
+              name: elasticsearch
+              ports:
+                - containerPort: 9200
+              resources: {}
+          restartPolicy: Always
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: grafana
+      name: grafana
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: grafana
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+            kompose.version: 1.26.1 (a9d05d509)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: grafana
+        spec:
+          containers:
+            - image: grafana/grafana:7.5.6
+              name: grafana
+              ports:
+                - containerPort: 3000
+              resources: {}
+          restartPolicy: Always
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: kibana
+      name: kibana
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: kibana
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+            kompose.version: 1.26.1 (a9d05d509)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: kibana
+        spec:
+          containers:
+            - env:
+                - name: ELASTICSEARCH_HOSTS
+                  value: http://elasticsearch:9200
+              image: docker.elastic.co/kibana/kibana:8.2.0
+              name: kibana
+              ports:
+                - containerPort: 5601
+              resources: {}
+          restartPolicy: Always
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: logstash
+      name: logstash
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: logstash
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+            kompose.version: 1.26.1 (a9d05d509)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: logstash
+        spec:
+          containers:
+            - args:
+                - logstash
+                - -f
+                - /etc/logstash/logstash.conf
+              image: docker.elastic.co/logstash/logstash:8.2.0
+              name: logstash
+              ports:
+                - containerPort: 5100
+                - containerPort: 12201
+                - containerPort: 12201
+                  protocol: UDP
+              resources: {}
+          restartPolicy: Always
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: mongodb
+      name: mongodb
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: mongodb
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+            kompose.version: 1.26.1 (a9d05d509)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: mongodb
+        spec:
+          containers:
+            - image: mongo:4.4.3
+              name: mongodb
+              ports:
+                - containerPort: 27017
+              resources: {}
+          restartPolicy: Always
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: nginx
+      name: nginx
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: nginx
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+            kompose.version: 1.26.1 (a9d05d509)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: nginx
+        spec:
+          containers:
+            - image: nginx
+              name: nginx
+              ports:
+                - containerPort: 80
+              resources: {}
+          restartPolicy: Always
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: prometheus
+      name: prometheus
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: prometheus
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+            kompose.version: 1.26.1 (a9d05d509)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: prometheus
+        spec:
+          containers:
+            - image: prom/prometheus:v2.27.0
+              name: prometheus
+              ports:
+                - containerPort: 9090
+              resources: {}
+          restartPolicy: Always
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: redis
+      name: redis
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: redis
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+            kompose.version: 1.26.1 (a9d05d509)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: redis
+        spec:
+          containers:
+            - image: redis
+              name: redis
+              ports:
+                - containerPort: 6379
+              resources: {}
+          restartPolicy: Always
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: telegraf
+      name: telegraf
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: telegraf
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: C:\Program Files\Kompose\kompose.exe convert -o deploy
+            kompose.version: 1.26.1 (a9d05d509)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: telegraf
+        spec:
+          containers:
+            - image: telegraf:latest
+              name: telegraf
+              resources: {}
+          restartPolicy: Always
+    status: {}
+kind: List
+metadata: {}
+

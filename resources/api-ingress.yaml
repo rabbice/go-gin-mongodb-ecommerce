@@ -1,0 +1,10 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-74594c7879-phq6w
+spec:
+  defaultBackend:
+    service:
+      name: api-74594c7879-phq6w
+      port:
+        number: 5000
