@@ -115,6 +115,13 @@ jobs:
             then
               ssh -oStrictHostKeyChecking=no ec2-user@IP "docker-compose pull && docker-compose up -d"
             fi
+  release:
+    executor: environment
+    steps:
+      - run:
+          name: Deploy with Docker Compose
+          command: |
+             ssh -oStrictHostKeyChecking=no ec2-user@IP "docker-compose pull && docker-compose up -d"
 workflows:
   ci_cd:
     jobs:
