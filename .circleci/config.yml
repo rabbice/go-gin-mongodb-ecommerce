@@ -102,6 +102,19 @@ jobs:
             docker login --username $DOCKER_USER --password $DOCKER_PASSWORD
             docker tag fractalform/ecommerce-api:$TAG fractalform/ecommerce-api:$TAG
             docker push fractalform/ecommerce-api:$TAG
+  deploy:
+    executor: environment
+    steps:
+      - run:
+          name: Deploy with Docker Compose
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "preprod" ]
+            then
+              ssh -oStrictHostKeyChecking=no ec2-user@IP "docker-compose pull && docker-compose up -d"
+            elif [ "${CIRCLE_BRANCH}" == "develop" ]
+            then
+              ssh -oStrictHostKeyChecking=no ec2-user@IP "docker-compose pull && docker-compose up -d"
+            fi
 workflows:
   ci_cd:
     jobs:
