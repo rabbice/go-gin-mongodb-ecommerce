@@ -106,4 +106,31 @@ workflows:
   ci_cd:
     jobs:
       - test
-      - build
+      - build:
+          requires:
+            - test
+      - deploy:
+          requires:
+            - test
+            - build
+          filters:
+            branches:
+              only:
+                - develop
+                - prepod
+      - pause_workflow:
+          requires:
+            - test
+            - build
+          type: approval
+          filters:
+            branches:
+              only:
+                - master
+      - release:
+          requires:
+            - pause_workflow
+          filters:
+            branches:
+              only:
+                - master
