@@ -36,7 +36,7 @@ services:
   prometheus:
     image: prom/prometheus:v2.27.0
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./jobs/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - 9090:9090
     restart: always

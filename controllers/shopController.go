@@ -54,16 +54,20 @@ func AddShop() gin.HandlerFunc {
 
 func GetShop() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		shopId := c.Param("id")
-		docID, _ := primitive.ObjectIDFromHex(shopId)
+		shopId := c.Param("shop_id")
 		var shop models.Shop
-
-		err := shopCollection.FindOne(ctx, bson.M{"_id": docID}).Decode(&shop)
+		objectId, _ := primitive.ObjectIDFromHex(shopId)
+		filter := bson.M{"_id": objectId}
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		err := shopCollection.FindOne(ctx, filter).Decode(&shop)
+		defer cancel()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while fetching the shop"})
+			c.IndentedJSON(http.StatusInternalServerError, 
+				gin.H{"error": "error occured while fetching the shop"})
+				return
 		}
 
-		c.JSON(http.StatusOK, shop)
+		c.IndentedJSON(http.StatusOK, shop)
 	}
 }
 
